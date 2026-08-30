@@ -1,0 +1,5 @@
+#include "asterion.h"
+#include "shell.h"
+#include <stdio.h>
+#include <string.h>
+int main(void){uint32_t a,b;page_allocator_t memory;page_allocator_init(&memory,128ull*1024*1024);process_table_init();scheduler_init();vfs_init();astfs_init();process_create("init",10,&a);process_create("shell",8,&b);puts("Asterion OS hosted shell");puts("Educational harness — not a hardware emulator.");char line[64];while(printf("asterion> "),fgets(line,sizeof(line),stdin)){line[strcspn(line,"\n")]=0;if(!strcmp(line,"help"))shell_help();else if(!strcmp(line,"ps"))shell_ps();else if(!strcmp(line,"mem"))printf("pages: %llu used / %llu total\n",(unsigned long long)memory.used_pages,(unsigned long long)memory.total_pages);else if(!strcmp(line,"mounts")){for(uint32_t i=0;i<vfs_mount_count();i++){const filesystem_mount_t *m=vfs_mount_at(i);printf("%s on %s\n",m->name,m->mountpoint);}}else if(!strcmp(line,"uname"))shell_uname();else if(!strcmp(line,"clear"))puts("\033[2J\033[H");else if(!strcmp(line,"exit"))break;else if(line[0])puts("unknown command; type help");}return 0;}
